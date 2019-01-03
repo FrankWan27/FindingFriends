@@ -4,12 +4,12 @@ using UnityEngine.EventSystems;
 
 public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
-    private Transform handParent = null;
+    public Transform returnToParent = null;
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        handParent = this.transform.parent;
-        this.transform.SetParent(handParent.parent);
+        returnToParent = this.transform.parent;
+        this.transform.SetParent(returnToParent.parent);
 
         GetComponent<CanvasGroup>().blocksRaycasts = false;
     }
@@ -24,7 +24,7 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
     public void OnEndDrag(PointerEventData eventData)
     {
         Debug.Log("OnEndDrag");
-        this.transform.SetParent(handParent);
+        this.transform.SetParent(returnToParent);
 
         GetComponent<CanvasGroup>().blocksRaycasts = true;
     }
