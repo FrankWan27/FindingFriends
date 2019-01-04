@@ -13,15 +13,27 @@ public enum symbol { Spade, Heart, Club, Diamond };
 public class Card
 {
     public int value;
-
+    public symbol suit;
     public bool trump = false;
+
+    public int SuitToInt()
+    {
+        if (suit == symbol.Spade)
+            return 0;
+        else if (suit == symbol.Heart)
+            return 1;
+        else if (suit == symbol.Club)
+            return 2;
+        else if (suit == symbol.Diamond)
+            return 3;
+        else
+            return -1;
+    }
 }
 
-public class PlayingCard : Card
+public class NumberCard : Card
 {
-    symbol suit;
-
-    public PlayingCard (int i, symbol s)
+    public NumberCard(int i, symbol s)
     {
         value = i;
         suit = s;
@@ -38,6 +50,7 @@ public class JokerCard : Card
             value = 18;
         else
             value = 17;
+
         trump = true;
     }
 }
