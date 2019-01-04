@@ -16,10 +16,18 @@ public class DeckManager : MonoBehaviour
         playerHand = GameObject.Find("Player Hand").transform;
         hands = initHands();
         deck = GenerateDeck();
-        AddCards(deck, GenerateDeck());
+        deck = AddCards(deck, GenerateDeck());
         Shuffle(deck);
         DealRound(hands);
         
+        foreach(List<Card> hand in hands)
+        {
+            Debug.Log("In Hand " + hand);
+            foreach(Card card in hand)
+            {
+                Debug.Log(card.value + " " + card.suit);
+            }
+        }
             
     }
 
@@ -52,10 +60,11 @@ public class DeckManager : MonoBehaviour
     }
 
     //Adds cards from deck2 to deck1
-    void AddCards(List<Card> deck1, List<Card> deck2)
+    List<Card> AddCards(List<Card> deck1, List<Card> deck2)
     {
         foreach (Card card in deck2)
             deck1.Add(card);
+        return deck1;
     }
 
     void Shuffle(List<Card> deck)
@@ -84,9 +93,13 @@ public class DeckManager : MonoBehaviour
         foreach(List<Card> hand in hands)
         {
             hand.Add(deck[0]);
-            GameObject newCard = Instantiate(CardPrefab, playerHand);
-            newCard.GetComponent<CardManager>().card = deck[0];
-            newCard.GetComponent<CardManager>().changeSprite();
+
+            if (hand == hands[0])
+            {
+                GameObject newCard = Instantiate(CardPrefab, playerHand);
+                newCard.GetComponent<CardManager>().card = deck[0];
+                newCard.GetComponent<CardManager>().changeSprite();
+            }
             deck.RemoveAt(0);
         }
     }
