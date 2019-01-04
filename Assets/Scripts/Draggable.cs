@@ -4,7 +4,14 @@ using UnityEngine.EventSystems;
 
 public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
+    DeckManager dm;
     public Transform returnToParent = null;
+
+
+    public void Awake()
+    {
+       dm = GameObject.Find("GameManager").GetComponent<DeckManager>();
+    }
 
     public void OnBeginDrag(PointerEventData eventData)
     {
@@ -25,6 +32,9 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
     {
         Debug.Log("OnEndDrag");
         this.transform.SetParent(returnToParent);
+        //TODO: return to hand insert in correct position
+
+        dm.ResetPlayerHand();
 
         GetComponent<CanvasGroup>().blocksRaycasts = true;
     }
