@@ -10,23 +10,22 @@ public class DeckManager : MonoBehaviour
 
     public GameObject cardPrefab;
 
+    GameManager gm;
 
     private void Start()
     {
         playerHand = GameObject.Find("Player Hand").transform;
+        gm = GameObject.Find("GameManager").GetComponent<GameManager>();
         hands = initHands();
         deck = GenerateDeck();
         deck = AddCards(deck, GenerateDeck());
         Shuffle(deck);
         DealRound(hands);
-        
-        foreach(Pile hand in hands)
+
+        Pile hand = hands[0];
+        foreach(Card card in hand.cards)
         {
-            Debug.Log("In Hand " + hand);
-            foreach(Card card in hand.cards)
-            {
-                Debug.Log(card.value + " " + card.suit);
-            }
+            Debug.Log(card.value + " " + card.suit + " " + card.PlayingValue(gm.trumpSuit, gm.currentLevel));
         }
             
     }

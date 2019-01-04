@@ -43,20 +43,14 @@ public class Pile
     {
         foreach (Card card in cards)
         {
-            if (card.suit == gm.trumpSuit)
-                card.trump = true;
+            if (card.suit == gm.trumpSuit || card is JokerCard)
+                card.isTrump = true;
             else
-                card.trump = false;
+                card.isTrump = false;
 
             if(card.value == gm.currentLevel)
-            {
-                card.trump = true;
-                if (card.suit == gm.trumpSuit)
-                    card.value = 16;
-                else
-                    card.value = 15;
-
-            }
+            
+                card.isTrump = true;
         }
     }
 

@@ -14,7 +14,7 @@ public class Card
 {
     public int value;
     public symbol suit;
-    public bool trump = false;
+    public bool isTrump = false;
 
     public int SuitToInt()
     {
@@ -80,13 +80,21 @@ public class Card
 
     public int SuitToInt(symbol trump, int level)
     {
-        if (value == level)
+        if (isTrump)
             return 3;
         return SuitToInt(trump);
     }
 
     public int PlayingValue(symbol trump, int level)
     {
+        if (value == level)
+        {
+            if (suit == trump)
+                return SuitToInt(trump, level) * 13 + 16;
+            else
+                return SuitToInt(trump, level) * 13 + 15;
+        }
+
         return SuitToInt(trump, level) * 13 + value;
     }
 }
@@ -111,7 +119,7 @@ public class JokerCard : Card
         else
             value = 17;
 
-        trump = true;
+        isTrump = true;
     }
 }
 
