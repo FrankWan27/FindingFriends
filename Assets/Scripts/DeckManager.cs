@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class DeckManager : MonoBehaviour
 {
-    List<Card> deck;
-    List<Card>[] hands;
+    Pile deck;
+    Pile[] hands;
     public Transform playerHand;
 
     public GameObject CardPrefab;
@@ -20,10 +20,10 @@ public class DeckManager : MonoBehaviour
         Shuffle(deck);
         DealRound(hands);
         
-        foreach(List<Card> hand in hands)
+        foreach(Pile hand in hands)
         {
             Debug.Log("In Hand " + hand);
-            foreach(Card card in hand)
+            foreach(Card card in hand.cards)
             {
                 Debug.Log(card.value + " " + card.suit);
             }
@@ -31,18 +31,18 @@ public class DeckManager : MonoBehaviour
             
     }
 
-    List<Card>[] initHands()
+    Pile[] initHands()
     {
-        List<Card>[] hands = new List<Card>[5];
+        Pile[] hands = new Pile[5];
         for (int i = 0; i < 5; i++)
-            hands[i] = new List<Card>();
+            hands[i] = new Pile();
   
         return hands;
     }
 
-    List<Card> GenerateDeck()
+    Pile GenerateDeck()
     {
-        deck = new List<Card>();
+        deck = new Pile();
 
         // 2-14 (14 is ace)
         foreach (symbol suit in System.Enum.GetValues(typeof(symbol)))
@@ -60,47 +60,48 @@ public class DeckManager : MonoBehaviour
     }
 
     //Adds cards from deck2 to deck1
-    List<Card> AddCards(List<Card> deck1, List<Card> deck2)
+    Pile AddCards(Pile deck1, Pile deck2)
     {
-        foreach (Card card in deck2)
+        foreach (Card card in deck2.cards)
             deck1.Add(card);
         return deck1;
     }
 
-    void Shuffle(List<Card> deck)
+    void Shuffle(Pile deck)
     {
-        for(int n = deck.Count; n > 1; )
+        for(int n = deck.Count(); n > 1; )
         {
             n--;
             int k = Random.Range(0, n);
-            Card card = deck[k];
-            deck[k] = deck[n];
-            deck[n] = card;
+            Card card = deck.At(k);
+            deck.Set(k, deck.At(n));
+            deck.Set(n, card);
         }
     }
 
-    void DealRound(List<Card>[] hands)
+    void DealRound(Pile[] hands)
     {
-        while (deck.Count > 8)
+        while (deck.Count() > 8)
         {
             Deal(hands);
         }
     }
 
     //deals one card to each player
-    void Deal(List<Card>[] hands)
+    void Deal(Pile[] hands)
     {
-        foreach(List<Card> hand in hands)
+        foreach(Pile hand in hands)
         {
-            hand.Add(deck[0]);
+            Card c = deck.Pop();
+
+            hand.Add(c);
 
             if (hand == hands[0])
             {
                 GameObject newCard = Instantiate(CardPrefab, playerHand);
-                newCard.GetComponent<CardManager>().card = deck[0];
+                newCard.GetComponent<CardManager>().card = c;
                 newCard.GetComponent<CardManager>().changeSprite();
             }
-            deck.RemoveAt(0);
         }
     }
 
