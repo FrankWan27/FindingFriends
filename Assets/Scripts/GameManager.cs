@@ -1,24 +1,53 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+public enum state { Draw, Burry, Play, Score };
 
 public class GameManager : MonoBehaviour
 {
+
+    public state gameState;
+
+    bool revealed = false;
     public symbol trumpSuit = symbol.Spade;
     public int currentLevel = 2;
 
     public symbol currentSuit = symbol.Spade;
-
+    DeckManager dm;
 
     public GameObject cardPrefab;
 
+    void Start()
+    {
+        gameState = state.Draw;
+        dm = gameObject.GetComponent<DeckManager>();
+    }
+
+    public void Draw()
+    {
+        if(gameState == state.Draw)
+            dm.Deal();
+        if (dm.deck.Count() <= 8)
+            gameState = state.Burry;
+    }
+
     public GameObject SpawnCard(Card c)
     {
-        GameObject newCard = Instantiate(cardPrefab);
+
+        GameObject newCard = Instantiate(cardPrefab, new Vector3(0, 4f, -5f), Quaternion.Euler(90, 0, 0));
+
         newCard.GetComponent<CardManager>().card = c;
         newCard.GetComponent<CardManager>().changeSprite();
 
         return newCard;
+    }
+
+    public void SpawnDeck()
+    {
+        for (int i = 0; i < 108; i++)
+        {
+            GameObject newCard = Instantiate(cardPrefab, new Vector3(0, 1 + (0.05f * i), 0), Quaternion.Euler(-90, 0, 0));
+        }
     }
 
     public void LaunchCard(GameObject newCard)
@@ -27,7 +56,7 @@ public class GameManager : MonoBehaviour
 
         float randX = Random.Range(-4, 4);
         float randY = Random.Range(-5, -2);
-        float randZ = Random.Range(10, 8);
+        float randZ = Random.Range(6, 12);
 
         rb.velocity = new Vector3(randX, randY, randZ);
     }
@@ -35,12 +64,38 @@ public class GameManager : MonoBehaviour
     //Valid move = same suit, if none of same suit, any suit is valid
     public bool ValidMove(Card card, Pile hand)
     {
+        if (gameState == state.Draw)
+            return ValidReveal(card);
+        else if (gameState == state.Play)
+            return ValidPlay(card, hand);
+        else
+            return false;
+    }
+
+    bool ValidReveal(Card card)
+    {
+        if (revealed)
+        {
+            //figure out how to do doubles
+            return false;
+        }
+        else
+        {
+            if (card.value == currentLevel)
+                return true;
+            else
+                return false;
+        }
+    }
+
+    bool ValidPlay(Card card, Pile hand)
+    {
         //if we're playing trumps
-        if(currentSuit == trumpSuit)
+        if (currentSuit == trumpSuit)
         {
             //check if hand contains trumps
             bool hasTrump = false;
-            foreach(Card c in hand.cards)
+            foreach (Card c in hand.cards)
             {
                 if (c.isTrump)
                 {
@@ -84,6 +139,23 @@ public class GameManager : MonoBehaviour
             }
             else
                 return true;
+        }
+    }
+
+    public void PlayMove(Card card, Pile hand)
+    {
+        if (gameState == state.Draw)
+        {
+            revealed = true;
+            trumpSuit = card.suit;
+            GameObject newCard = SpawnCard(card);
+            LaunchCard(newCard);
+        }
+        else if (gameState == state.Play)
+        {
+            hand.Remove(card);
+            GameObject newCard = SpawnCard(card);
+            LaunchCard(newCard);
         }
     }
 }

@@ -4,9 +4,10 @@ using UnityEngine;
 
 public class DeckManager : MonoBehaviour
 {
-    Pile deck;
+    public Pile deck;
     Pile[] hands;
     public Transform playerHand;
+    public Transform deckObject;
 
     public GameObject cardPrefab;
 
@@ -15,12 +16,14 @@ public class DeckManager : MonoBehaviour
     private void Start()
     {
         playerHand = GameObject.Find("Player Hand").transform;
+        deckObject = GameObject.Find("Deck").transform;
+
         gm = GameObject.Find("GameManager").GetComponent<GameManager>();
         hands = initHands();
         deck = GenerateDeck();
         deck = AddCards(deck, GenerateDeck());
         Shuffle(deck);
-        DealRound(hands);
+        //DealRound(hands);
 
         Pile hand = hands[0];
         foreach(Card card in hand.cards)
@@ -82,16 +85,21 @@ public class DeckManager : MonoBehaviour
     {
         while (deck.Count() > 8)
         {
-            Deal(hands);
+            Deal();
         }
     }
 
     //deals one card to each player
-    void Deal(Pile[] hands)
+    public void Deal()
     {
-        foreach(Pile hand in hands)
+        //Change to 1 by 1 with multiplayer
+        for (int i = 0; i < hands.Length; i++)
+            GameObject.Destroy(deckObject.GetChild(i).gameObject);
+
+        foreach (Pile hand in hands)
         {
             Card c = deck.Pop();
+           
 
             hand.Add(c);
 
