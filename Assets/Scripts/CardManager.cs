@@ -15,7 +15,17 @@ public class CardManager : MonoBehaviour
     }
     public void changeSprite()
     {
-        Image img = this.transform.GetChild(0).GetChild(1).GetComponent<Image>();
-        img.sprite = spriteLib.sprites[spriteLib.CardToSprite(card)];
+        Image img = this.transform.GetChild(0).GetComponent<Image>();
+        if (img != null)
+        {
+            img.sprite = spriteLib.sprites[spriteLib.CardToSprite(card)];
+        }
+        else
+        {
+            SpriteRenderer sr = this.transform.GetChild(0).GetComponent<SpriteRenderer>();
+            sr.sprite = spriteLib.sprites[spriteLib.CardToSprite(card)];
+        }
     }
+
+    
 }

@@ -32,8 +32,7 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
     {
         Debug.Log("OnEndDrag");
         this.transform.SetParent(returnToParent);
-        //TODO: return to hand insert in correct position
-
+        //TODO: return to hand insert in correct position instead of resetting
         dm.ResetPlayerHand();
 
         GetComponent<CanvasGroup>().blocksRaycasts = true;

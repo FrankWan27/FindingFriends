@@ -122,4 +122,9 @@ public class DeckManager : MonoBehaviour
         ResetHandDisplay(hands[0]);
     }
 
+    public Pile GetPlayerHand()
+    {
+        return hands[0];
+    }
+
 }

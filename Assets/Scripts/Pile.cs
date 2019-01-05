@@ -80,4 +80,9 @@ public class Pile
     {
         cards[i] = c;
     }
+
+    public void Remove(Card c)
+    {
+        cards.Remove(c);
+    }
 }
