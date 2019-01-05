@@ -15,26 +15,64 @@ public class GameManager : MonoBehaviour
     public symbol currentSuit = symbol.Spade;
     DeckManager dm;
 
+    public Transform playerHand;
+
     public GameObject cardPrefab;
+    public GameObject card3DPrefab;
+    public GameObject emptyPrefab;
+
+    public List<GameObject> selected;
 
     void Start()
     {
         gameState = state.Draw;
         dm = gameObject.GetComponent<DeckManager>();
+        selected = new List<GameObject>();
     }
 
     public void Draw()
     {
         if(gameState == state.Draw)
             dm.Deal();
+        else
+            ResetPlayerHand();
+
         if (dm.deck.Count() <= 8)
             gameState = state.Burry;
+
     }
+
+    void ResetHandDisplay(Pile hand)
+    {
+        for (int i = playerHand.childCount - 1; i >= 0; i--)
+        {
+            GameObject.Destroy(playerHand.GetChild(i).gameObject);
+        }
+        foreach (Card c in hand.cards)
+        {
+            GameObject newCard = Instantiate(cardPrefab, playerHand);
+            newCard.GetComponent<CardManager>().card = c;
+            newCard.GetComponent<CardManager>().changeSprite();
+        }
+    }
+
+    public void ResetPlayerHand()
+    {
+        dm.GetPlayerHand().Sort();
+        ResetHandDisplay(dm.GetPlayerHand());
+
+
+        foreach (GameObject o in selected)
+            GameObject.Destroy(o);
+        selected.Clear();
+    }
+
+
 
     public GameObject SpawnCard(Card c)
     {
 
-        GameObject newCard = Instantiate(cardPrefab, new Vector3(0, 4f, -5f), Quaternion.Euler(90, 0, 0));
+        GameObject newCard = Instantiate(card3DPrefab, new Vector3(0, 4f, -5f), Quaternion.Euler(90, 0, 0));
 
         newCard.GetComponent<CardManager>().card = c;
         newCard.GetComponent<CardManager>().changeSprite();
@@ -46,7 +84,7 @@ public class GameManager : MonoBehaviour
     {
         for (int i = 0; i < 108; i++)
         {
-            GameObject newCard = Instantiate(cardPrefab, new Vector3(0, 1 + (0.05f * i), 0), Quaternion.Euler(-90, 0, 0));
+            GameObject newCard = Instantiate(card3DPrefab, new Vector3(0, 1 + (0.05f * i), 0), Quaternion.Euler(-90, 0, 0));
         }
     }
 

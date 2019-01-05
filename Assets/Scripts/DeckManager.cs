@@ -6,16 +6,11 @@ public class DeckManager : MonoBehaviour
 {
     public Pile deck;
     Pile[] hands;
-    public Transform playerHand;
     public Transform deckObject;
-
-    public GameObject cardPrefab;
-
     GameManager gm;
 
     private void Start()
     {
-        playerHand = GameObject.Find("Player Hand").transform;
         deckObject = GameObject.Find("Deck").transform;
 
         gm = GameObject.Find("GameManager").GetComponent<GameManager>();
@@ -105,29 +100,9 @@ public class DeckManager : MonoBehaviour
 
             if (hand == hands[0])
             {
-                ResetPlayerHand();
+                gm.ResetPlayerHand();
             }
         }
-    }
-
-    void ResetHandDisplay(Pile hand)
-    {
-        for (int i = playerHand.childCount - 1; i >= 0; i--)
-        {
-            GameObject.Destroy(playerHand.GetChild(i).gameObject);
-        }
-        foreach (Card c in hand.cards)
-        {
-            GameObject newCard = Instantiate(cardPrefab, playerHand);
-            newCard.GetComponent<CardManager>().card = c;
-            newCard.GetComponent<CardManager>().changeSprite();
-        }
-    }
-
-    public void ResetPlayerHand()
-    {
-        hands[0].Sort();
-        ResetHandDisplay(hands[0]);
     }
 
     public Pile GetPlayerHand()

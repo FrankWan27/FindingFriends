@@ -76,6 +76,11 @@ public class Pile
         return cards[i];
     }
 
+    public int IndexOf(Card c)
+    {
+        return cards.IndexOf(c);
+    }
+
     public void Set(int i, Card c)
     {
         cards[i] = c;
