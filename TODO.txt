@@ -1,0 +1,6 @@
+- Actually play multiple cards at once and validate them
+- Multiplayer support
+- When selecting cards, make them all visible (probably will be based on value)
+- Rules
+- Burrying Cards
+- Calling a partner
