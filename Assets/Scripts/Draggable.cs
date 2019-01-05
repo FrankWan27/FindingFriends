@@ -22,16 +22,33 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        returnToParent = this.transform.parent;
-        this.transform.SetParent(returnToParent.parent);
+        foreach (GameObject o in gm.selected)
+        {
+            o.GetComponent<CanvasGroup>().blocksRaycasts = false;
+        }
 
-        GetComponent<CanvasGroup>().blocksRaycasts = false;
+        if (selected)
+        {
+            GetComponent<CanvasGroup>().blocksRaycasts = false;
+        }
+        else
+        {
+            returnToParent = this.transform.parent;
+            this.transform.SetParent(returnToParent.parent);
+            gm.selected.Add(gameObject);
+
+            GetComponent<CanvasGroup>().blocksRaycasts = false;
+        }
     }
 
     public void OnDrag(PointerEventData eventData)
     {
         Debug.Log("OnDrag");
 
+        foreach (GameObject o in gm.selected)
+        {
+            o.transform.position = eventData.position;
+        }
         this.transform.position = eventData.position;
     }
 
@@ -39,8 +56,27 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
     {
         Debug.Log("OnEndDrag");
         this.transform.SetParent(returnToParent);
+        gm.selected.Remove(gameObject);
         //TODO: return to hand insert in correct position instead of resetting
-        gm.ResetPlayerHand();
+        this.transform.SetSiblingIndex(dm.GetPlayerHand().IndexOf(cm.card));
+        if (selected)
+        {
+            selected = false;
+            GameObject.Destroy(placeholder);
+        }
+
+        for (int i = gm.selected.Count - 1; i >= 0; i--)
+        {
+            GameObject o = gm.selected[i];
+            o.transform.SetParent(returnToParent);
+            Draggable d = o.GetComponent<Draggable>();
+            o.transform.SetSiblingIndex(dm.GetPlayerHand().IndexOf(d.cm.card));
+            d.selected = false;
+            GameObject.Destroy(d.placeholder);
+            o.GetComponent<CanvasGroup>().blocksRaycasts = true;
+            gm.selected.Remove(o);
+        }
+
 
         GetComponent<CanvasGroup>().blocksRaycasts = true;
     }
