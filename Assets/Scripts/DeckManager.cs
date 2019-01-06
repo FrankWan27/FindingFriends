@@ -76,6 +76,7 @@ public class DeckManager : MonoBehaviour
         }
     }
 
+    //deprecated
     void DealRound(Pile[] hands)
     {
         while (deck.Count() > 8)
@@ -87,7 +88,7 @@ public class DeckManager : MonoBehaviour
     //deals one card to each player
     public void Deal()
     {
-        //Change to 1 by 1 with multiplayer
+        //TODO: Change to 1 by 1 with multiplayer
         for (int i = 0; i < hands.Length; i++)
             GameObject.Destroy(deckObject.GetChild(i).gameObject);
 
@@ -98,7 +99,21 @@ public class DeckManager : MonoBehaviour
 
             hand.Add(c);
 
-            if (hand == hands[0])
+            if (hand == GetPlayerHand())
+            {
+                gm.ResetPlayerHand();
+            }
+        }
+    }
+
+    public void LandlordBurry()
+    {
+        while (deck.Count() > 0)
+        {
+            Card c = deck.Pop();
+            GetLandlordHand().Add(c);
+
+            if(GetLandlordHand() == GetPlayerHand())
             {
                 gm.ResetPlayerHand();
             }
@@ -110,4 +125,8 @@ public class DeckManager : MonoBehaviour
         return hands[0];
     }
 
+    public Pile GetLandlordHand()
+    {
+        return hands[0];
+    }
 }

@@ -97,7 +97,7 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
             
             returnToParent = this.transform.parent;
             this.transform.SetParent(returnToParent.parent);
-            this.transform.Translate(new Vector3(0, 50, 0));
+            this.transform.Translate(new Vector3(0, 40, 0));
             this.transform.SetAsFirstSibling();
 
             gm.selected.Add(gameObject);

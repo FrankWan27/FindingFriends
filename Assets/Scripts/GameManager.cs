@@ -38,8 +38,16 @@ public class GameManager : MonoBehaviour
             ResetPlayerHand();
 
         if (dm.deck.Count() <= 8)
+        {
             gameState = state.Burry;
+            dm.LandlordBurry();
+        }
 
+    }
+
+    void LandlordBurry()
+    {
+        
     }
 
     void ResetHandDisplay(Pile hand)
@@ -60,7 +68,6 @@ public class GameManager : MonoBehaviour
     {
         dm.GetPlayerHand().Sort();
         ResetHandDisplay(dm.GetPlayerHand());
-
 
         foreach (GameObject o in selected)
             GameObject.Destroy(o);
@@ -99,27 +106,42 @@ public class GameManager : MonoBehaviour
         rb.velocity = new Vector3(randX, randY, randZ);
     }
 
+
     //Valid move = same suit, if none of same suit, any suit is valid
     public bool ValidMove(Card card, Pile hand)
     {
+        Debug.Log("Validating" + card.value);
         if (gameState == state.Draw)
-            return ValidReveal(card);
+            return ValidReveal();
+        else if (gameState == state.Burry)
+            return ValidReveal();
         else if (gameState == state.Play)
             return ValidPlay(card, hand);
         else
             return false;
     }
 
-    bool ValidReveal(Card card)
+    bool ValidReveal()
     {
+        List<Card> cards = SelectedToCards();
+        Debug.Log("Revealing" + cards[0].value);
+
         if (revealed)
         {
-            //figure out how to do doubles
+            //only thing you can play is double level
+            if(selected.Count == 2)
+            {
+                //TODO: overload == and then just see if equal and value = level
+                if (cards[0].value == currentLevel && cards[1].value == currentLevel && cards[0].suit == cards[1].suit)
+                {
+                    return true;
+                }
+            }
             return false;
         }
         else
         {
-            if (card.value == currentLevel)
+            if(selected.Count == 1 && cards[0].value == currentLevel)
                 return true;
             else
                 return false;
@@ -180,20 +202,39 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void PlayMove(Card card, Pile hand)
+    public void PlayMove(Pile hand)
     {
-        if (gameState == state.Draw)
+        List<Card> cards = SelectedToCards();
+        if (gameState == state.Draw || gameState == state.Burry)
         {
             revealed = true;
-            trumpSuit = card.suit;
-            GameObject newCard = SpawnCard(card);
-            LaunchCard(newCard);
+            trumpSuit = cards[0].suit;
+            foreach (Card card in cards)
+            {
+                GameObject newCard = SpawnCard(card);
+                LaunchCard(newCard);
+            }
         }
         else if (gameState == state.Play)
         {
-            hand.Remove(card);
-            GameObject newCard = SpawnCard(card);
-            LaunchCard(newCard);
+            foreach (Card card in cards)
+            {
+                Debug.Log("Playing cards");
+                hand.Remove(card);
+                GameObject newCard = SpawnCard(card);
+                LaunchCard(newCard);
+            }
+            ResetPlayerHand();
         }
+    }
+
+    List<Card> SelectedToCards()
+    {
+        List<Card> cards = new List<Card>();
+        foreach(GameObject o in selected)
+        {
+            cards.Add(o.GetComponent<CardManager>().card);
+        }
+        return cards;
     }
 }

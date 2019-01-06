@@ -15,6 +15,7 @@ public class Card
     public int value;
     public symbol suit;
     public bool isTrump = false;
+    
 
     public int SuitToInt()
     {
