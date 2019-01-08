@@ -1,11 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-public enum state { Draw, Burry, Play, Score };
+using UnityEngine.UI;
+using UnityEngine.Networking;
 
-public class GameManager : MonoBehaviour
+public enum state { Lobby, Draw, Burry, Play, Score };
+
+public class GameManager : NetworkBehaviour
 {
-
+    [SyncVar]
     public state gameState;
 
     bool revealed = false;
@@ -20,14 +23,46 @@ public class GameManager : MonoBehaviour
     public GameObject cardPrefab;
     public GameObject card3DPrefab;
     public GameObject emptyPrefab;
+    public GameObject deckPrefab;
 
     public List<GameObject> selected;
 
+    public Text playerCountText;
+    public Text currentLevelText;
+    public Text trumpSuitText;
+    public Text currentSuitText;
+
+    [SyncVar]
+    public int playerCount = 0;
+
+
+    private void Update()
+    {
+        if(gameState == state.Lobby && isServer)
+            playerCount = NetworkServer.connections.Count;
+
+        playerCountText.text = "# of players: " + playerCount;
+        currentLevelText.text = "Current level: " + currentLevel;
+        trumpSuitText.text = "Trump Suit: " + trumpSuit;
+        currentSuitText.text = "Current Suit: " + currentSuit;
+    }
+
+
     void Start()
     {
-        gameState = state.Draw;
         dm = gameObject.GetComponent<DeckManager>();
         selected = new List<GameObject>();
+    }
+
+    [ClientRpc]
+    public void RpcBeginGame()
+    {
+        gameState = state.Draw;
+        SpawnDeck();
+        dm.BeginGame();
+        //hide gui
+        GameObject.Find("NetworkManager").GetComponent<NetworkManagerHUD>().showGUI = false;
+        GameObject.Destroy(GameObject.Find("BeginButton"));
     }
 
     public void Draw()
@@ -89,10 +124,13 @@ public class GameManager : MonoBehaviour
 
     public void SpawnDeck()
     {
-        for (int i = 0; i < 108; i++)
-        {
-            GameObject newCard = Instantiate(card3DPrefab, new Vector3(0, 1 + (0.05f * i), 0), Quaternion.Euler(-90, 0, 0));
-        }
+
+        Instantiate(deckPrefab, new Vector3(0, 9, -7), Quaternion.Euler(0, 0, 0));
+        
+     //   for (int i = 0; i < 108; i++)
+     //   {
+     //       GameObject newCard = Instantiate(card3DPrefab, new Vector3(0, 1 + (0.05f * i), 0), Quaternion.Euler(-90, 0, 0));
+     //   }
     }
 
     public void LaunchCard(GameObject newCard)

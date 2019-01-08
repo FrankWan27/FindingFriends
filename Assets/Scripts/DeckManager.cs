@@ -1,31 +1,34 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
 public class DeckManager : MonoBehaviour
 {
     public Pile deck;
-    Pile[] hands;
+    //Pile[] hands;
+    public List<Player> players;
     public Transform deckObject;
     GameManager gm;
 
     private void Start()
     {
-        deckObject = GameObject.Find("Deck").transform;
-
+        players = new List<Player>();
         gm = GameObject.Find("GameManager").GetComponent<GameManager>();
-        hands = initHands();
+    }
+
+    public void BeginGame()
+    {
+
+
+        deckObject = GameObject.Find("Deck(Clone)").transform;
+
+        Debug.Log(players.Count);
+//        hands = initHands();
         deck = GenerateDeck();
         deck = AddCards(deck, GenerateDeck());
         Shuffle(deck);
         //DealRound(hands);
-
-        Pile hand = hands[0];
-        foreach(Card card in hand.cards)
-        {
-            Debug.Log(card.value + " " + card.suit + " " + card.PlayingValue(gm.trumpSuit, gm.currentLevel));
-        }
-            
     }
 
     Pile[] initHands()
@@ -89,21 +92,24 @@ public class DeckManager : MonoBehaviour
     public void Deal()
     {
         //TODO: Change to 1 by 1 with multiplayer
-        for (int i = 0; i < hands.Length; i++)
-            GameObject.Destroy(deckObject.GetChild(i).gameObject);
+        // for (int i = 0; i < hands.Length; i++)
+        //     GameObject.Destroy(deckObject.GetChild(i).gameObject);
+        GameObject.Destroy(deckObject.GetChild(0).gameObject);
 
-        foreach (Pile hand in hands)
-        {
-            Card c = deck.Pop();
-           
+        Card c = deck.Pop();
 
-            hand.Add(c);
+        /*       foreach (Pile hand in hands)
+               {
+                   Card c = deck.Pop();
 
-            if (hand == GetPlayerHand())
-            {
-                gm.ResetPlayerHand();
-            }
-        }
+
+                   hand.Add(c);
+
+                   if (hand == GetPlayerHand())
+                   {
+                       gm.ResetPlayerHand();
+                   }
+               }*/
     }
 
     public void LandlordBurry()
@@ -122,11 +128,11 @@ public class DeckManager : MonoBehaviour
 
     public Pile GetPlayerHand()
     {
-        return hands[0];
+        return players[0].hand;
     }
 
     public Pile GetLandlordHand()
     {
-        return hands[0];
+        return players[0].hand;
     }
 }
