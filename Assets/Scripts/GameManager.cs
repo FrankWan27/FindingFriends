@@ -72,7 +72,7 @@ public class GameManager : NetworkBehaviour
         else
             ResetPlayerHand();
 
-        if (dm.deck.Count() <= 8)
+        if (dm.deck.Count() <= 0)
         {
             gameState = state.Burry;
             dm.LandlordBurry();

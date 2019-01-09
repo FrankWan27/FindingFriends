@@ -664,7 +664,7 @@ MonoBehaviour:
     type: 3}
   emptyPrefab: {fileID: 5543179846585696312, guid: c02609766ed3bd3469360162b4a13efc,
     type: 3}
-  deckPrefab: {fileID: 6258673330507343744, guid: cef7cd662152e6b44848e6ae43e7cccf,
+  deckPrefab: {fileID: 6258673330507343744, guid: 3d6352f26078f3a46b6e586c708016f5,
     type: 3}
   selected: []
   playerCountText: {fileID: 1969034150}

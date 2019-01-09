@@ -1,10 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class DeckManager : MonoBehaviour
+public class DeckManager : NetworkBehaviour
 {
+
     public Pile deck;
     //Pile[] hands;
     public List<Player> players;
@@ -21,12 +21,13 @@ public class DeckManager : MonoBehaviour
     {
 
 
-        deckObject = GameObject.Find("Deck(Clone)").transform;
+        deckObject = GameObject.Find("DeckCopy(Clone)").transform;
 
         Debug.Log(players.Count);
-//        hands = initHands();
-        deck = GenerateDeck();
-        deck = AddCards(deck, GenerateDeck());
+        //        hands = initHands();
+        deck = SmallDeck();
+        //deck = GenerateDeck();
+        //deck = AddCards(deck, GenerateDeck());
         Shuffle(deck);
         //DealRound(hands);
     }
@@ -38,6 +39,16 @@ public class DeckManager : MonoBehaviour
             hands[i] = new Pile();
   
         return hands;
+    }
+
+    Pile SmallDeck()
+    {
+        deck = new Pile();
+
+        for (int i = 2; i <= 14; i++)
+            deck.Add(new NumberCard(i, symbol.Diamond));
+
+        return deck;
     }
 
     Pile GenerateDeck()
@@ -97,6 +108,13 @@ public class DeckManager : MonoBehaviour
         GameObject.Destroy(deckObject.GetChild(0).gameObject);
 
         Card c = deck.Pop();
+        //get local player
+        foreach (Player p in players)
+        {
+            if (p.isLocalPlayer)
+                p.Draw(c);
+        }
+
 
         /*       foreach (Pile hand in hands)
                {
@@ -110,6 +128,7 @@ public class DeckManager : MonoBehaviour
                        gm.ResetPlayerHand();
                    }
                }*/
+         
     }
 
     public void LandlordBurry()
@@ -128,6 +147,12 @@ public class DeckManager : MonoBehaviour
 
     public Pile GetPlayerHand()
     {
+        foreach (Player p in players)
+        {
+            if (p.isLocalPlayer)
+                return p.hand;
+        }
+        Debug.Log("Couldn't find player's hand!!");
         return players[0].hand;
     }
 
