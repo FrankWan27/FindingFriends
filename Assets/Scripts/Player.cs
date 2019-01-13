@@ -27,7 +27,14 @@ public class Player : NetworkBehaviour
         if (!isLocalPlayer)
             return;
         CmdDraw();
+        CmdIncPlayer();
         
+    }
+
+    [Command]
+    public void CmdIncPlayer()
+    {
+        gm.IncrementPlayer();
     }
 
     [Command]

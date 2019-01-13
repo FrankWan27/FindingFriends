@@ -12,10 +12,17 @@ public class GameManager : NetworkBehaviour
     public state gameState;
 
     bool revealed = false;
+    [SyncVar]
     public symbol trumpSuit = symbol.Spade;
+    [SyncVar]
     public int currentLevel = 2;
-
+    [SyncVar]
+    public int currentPlayer = 0;
+    [SyncVar]
     public symbol currentSuit = symbol.Spade;
+    [SyncVar]
+    public int playerCount = 0;
+
     DeckManager dm;
 
     public Transform playerHand;
@@ -31,12 +38,12 @@ public class GameManager : NetworkBehaviour
     public Text currentLevelText;
     public Text trumpSuitText;
     public Text currentSuitText;
+    public Text currentPlayerText;
 
     public List<Player> players;
 
 
-    [SyncVar]
-    public int playerCount = 0;
+
 
 
     private void Update()
@@ -48,6 +55,7 @@ public class GameManager : NetworkBehaviour
         currentLevelText.text = "Current level: " + currentLevel;
         trumpSuitText.text = "Trump Suit: " + trumpSuit;
         currentSuitText.text = "Current Suit: " + currentSuit;
+        currentPlayerText.text = "Current Player: " + currentPlayer;
     }
 
 
@@ -80,8 +88,10 @@ public class GameManager : NetworkBehaviour
     {
         if (gameState == state.Draw)
         {
-            
-            GetPlayer().Draw();
+            if (players[currentPlayer] == GetPlayer())
+            {
+                GetPlayer().Draw();
+            }
         }
         else
         { }
@@ -92,6 +102,13 @@ public class GameManager : NetworkBehaviour
             dm.LandlordBurry();
         }
 
+    }
+
+    public void IncrementPlayer()
+    {
+        currentPlayer++;
+        if (currentPlayer == players.Count)
+            currentPlayer = 0;
     }
 
     void LandlordBurry()
