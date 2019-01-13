@@ -58,7 +58,7 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
         this.transform.SetParent(returnToParent);
         gm.selected.Remove(gameObject);
         //TODO: return to hand insert in correct position instead of resetting
-        this.transform.SetSiblingIndex(dm.GetPlayerHand().IndexOf(cm.card));
+        this.transform.SetSiblingIndex(gm.GetPlayer().hand.IndexOf(cm.card));
         if (selected)
         {
             selected = false;
@@ -70,7 +70,7 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
             GameObject o = gm.selected[i];
             o.transform.SetParent(returnToParent);
             Draggable d = o.GetComponent<Draggable>();
-            o.transform.SetSiblingIndex(dm.GetPlayerHand().IndexOf(d.cm.card));
+            o.transform.SetSiblingIndex(gm.GetPlayer().hand.IndexOf(d.cm.card));
             d.selected = false;
             GameObject.Destroy(d.placeholder);
             o.GetComponent<CanvasGroup>().blocksRaycasts = true;
@@ -87,7 +87,7 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
         {
             selected = false;
             this.transform.SetParent(returnToParent);
-            this.transform.SetSiblingIndex(dm.GetPlayerHand().IndexOf(cm.card));
+            this.transform.SetSiblingIndex(gm.GetPlayer().hand.IndexOf(cm.card));
             GameObject.Destroy(placeholder);
             gm.selected.Remove(gameObject);
         }
@@ -104,7 +104,7 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
             
             //placeholder
             placeholder = Instantiate(gm.emptyPrefab, returnToParent);
-            placeholder.transform.SetSiblingIndex(dm.GetPlayerHand().IndexOf(cm.card));
+            placeholder.transform.SetSiblingIndex(gm.GetPlayer().hand.IndexOf(cm.card));
 
         }
     }

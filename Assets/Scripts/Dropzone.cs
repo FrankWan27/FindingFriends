@@ -21,9 +21,9 @@ public class Dropzone : MonoBehaviour, IDropHandler
 
         
 
-        if (gm.ValidMove(cm.card, dm.GetPlayerHand()))
+        if (gm.ValidMove(cm.card, gm.GetPlayer().hand))
         {
-            gm.PlayMove(dm.GetPlayerHand());
+            gm.PlayMove(gm.GetPlayer().hand);
         }
         //d.returnToParent = this.transform;
     }

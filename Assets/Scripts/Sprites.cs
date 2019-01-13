@@ -9,19 +9,15 @@ public class Sprites : MonoBehaviour
 
     public int CardToSprite(Card card)
     {
-        if (card.GetType() == typeof(NumberCard))
+        if (card.isJoker)
         {
-            return card.SuitToInt() * 13 + (card.value - 2);
-        }
-        else if (card.GetType() == typeof(JokerCard))
-        {
-            if (((JokerCard)card).big)
+            if (card.big)
                 return 53;
             else
                 return 52;
         }
         else
-            return 54;
+            return card.SuitToInt() * 13 + (card.value - 2);
     }
 
 }

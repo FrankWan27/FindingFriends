@@ -7,6 +7,7 @@ public class Player : NetworkBehaviour
 {
     GameManager gm;
     DeckManager dm;
+
     public Pile hand;
 
 
@@ -17,22 +18,41 @@ public class Player : NetworkBehaviour
         dm = GameObject.Find("GameManager").GetComponent<DeckManager>();
 
         hand = new Pile();
-        dm.players.Add(this);
+        gm.players.Add(this);
 
     }
 
-    public void Draw(Card c)
+    public void Draw()
     {
         if (!isLocalPlayer)
             return;
+        CmdDraw();
+        
+    }
 
+    [Command]
+    public void CmdDraw()
+    {
+        Card c = dm.Deal();
+        gm.RpcDestroyCard();
+        RpcDealCard(c);
+    }
+
+    //gives Card c to Player p
+    [ClientRpc]
+    public void RpcDealCard(Card c)
+    {
+        Debug.Log(c.GetType());
+
+        Pile h = gm.GetPlayer().hand;
         hand.Add(c);
         gm.ResetPlayerHand();
     }
 
-    // Update is called once per frame
-    void Update()
+    [Command]
+    public void CmdDealCard()
     {
-        
+        Card c = dm.Deal();
+        RpcDealCard(c);
     }
 }

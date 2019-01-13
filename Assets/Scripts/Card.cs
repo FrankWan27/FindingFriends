@@ -15,7 +15,31 @@ public class Card
     public int value;
     public symbol suit;
     public bool isTrump = false;
+    public bool isJoker = false;
+    public bool big = false;
     
+    public Card()
+    {
+
+    }
+
+    public Card (int n, symbol s)
+    {
+        value = n;
+        suit = s;
+    }
+
+    public Card(bool b)
+    {
+        isJoker = true;
+        big = b;
+        if (big)
+            value = 18;
+        else
+            value = 17;
+
+        isTrump = true;
+    }
 
     public int SuitToInt()
     {
@@ -100,28 +124,5 @@ public class Card
     }
 }
 
-public class NumberCard : Card
-{
-    public NumberCard(int i, symbol s)
-    {
-        value = i;
-        suit = s;
-    }
-}
-
-public class JokerCard : Card
-{
-    public bool big;
-    public JokerCard(bool b)
-    {
-        big = b;
-        if (big)
-            value = 18;
-        else
-            value = 17;
-
-        isTrump = true;
-    }
-}
 
 

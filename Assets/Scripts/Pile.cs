@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //List of cards = Pile (Hands and Deck)
+
 public class Pile
 {
     public List<Card> cards;
@@ -43,7 +44,7 @@ public class Pile
     {
         foreach (Card card in cards)
         {
-            if (card.suit == gm.trumpSuit || card is JokerCard)
+            if (card.suit == gm.trumpSuit || card.isJoker)
                 card.isTrump = true;
             else
                 card.isTrump = false;
@@ -57,6 +58,16 @@ public class Pile
     public void Add(Card card)
     {
         cards.Add(card);
+        //Print();
+        //Debug.Log(" ----------- ");
+    }
+
+    public void Print()
+    {
+        for (int i = 0; i < Count(); i++)
+        {
+            Debug.Log(i + ". " + cards[i].value + " of " + cards[i].suit);
+        }
     }
 
     public int Count()

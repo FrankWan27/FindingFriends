@@ -2,18 +2,16 @@
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class DeckManager : NetworkBehaviour
+public class DeckManager : MonoBehaviour
 {
 
     public Pile deck;
     //Pile[] hands;
-    public List<Player> players;
     public Transform deckObject;
     GameManager gm;
 
     private void Start()
     {
-        players = new List<Player>();
         gm = GameObject.Find("GameManager").GetComponent<GameManager>();
     }
 
@@ -22,8 +20,6 @@ public class DeckManager : NetworkBehaviour
 
 
         deckObject = GameObject.Find("DeckCopy(Clone)").transform;
-
-        Debug.Log(players.Count);
         //        hands = initHands();
         deck = SmallDeck();
         //deck = GenerateDeck();
@@ -46,7 +42,7 @@ public class DeckManager : NetworkBehaviour
         deck = new Pile();
 
         for (int i = 2; i <= 14; i++)
-            deck.Add(new NumberCard(i, symbol.Diamond));
+            deck.Add(new Card(i, symbol.Diamond));
 
         return deck;
     }
@@ -60,12 +56,12 @@ public class DeckManager : NetworkBehaviour
         {
             for (int i = 2; i <= 14; i++)
             {
-                deck.Add(new NumberCard(i, suit));
+                deck.Add(new Card(i, suit));
             }
         }
 
-        deck.Add(new JokerCard(false));
-        deck.Add(new JokerCard(true));
+        deck.Add(new Card(false));
+        deck.Add(new Card(true));
 
         return deck;
     }
@@ -99,36 +95,16 @@ public class DeckManager : NetworkBehaviour
         }
     }
 
-    //deals one card to each player
-    public void Deal()
+    //return a card
+    public Card Deal()
     {
         //TODO: Change to 1 by 1 with multiplayer
         // for (int i = 0; i < hands.Length; i++)
         //     GameObject.Destroy(deckObject.GetChild(i).gameObject);
-        GameObject.Destroy(deckObject.GetChild(0).gameObject);
 
         Card c = deck.Pop();
-        //get local player
-        foreach (Player p in players)
-        {
-            if (p.isLocalPlayer)
-                p.Draw(c);
-        }
 
-
-        /*       foreach (Pile hand in hands)
-               {
-                   Card c = deck.Pop();
-
-
-                   hand.Add(c);
-
-                   if (hand == GetPlayerHand())
-                   {
-                       gm.ResetPlayerHand();
-                   }
-               }*/
-         
+        return c;  
     }
 
     public void LandlordBurry()
@@ -136,28 +112,14 @@ public class DeckManager : NetworkBehaviour
         while (deck.Count() > 0)
         {
             Card c = deck.Pop();
-            GetLandlordHand().Add(c);
+            gm.GetLandlordHand().Add(c);
 
-            if(GetLandlordHand() == GetPlayerHand())
+            if(gm.GetLandlordHand() == gm.GetPlayer().hand)
             {
                 gm.ResetPlayerHand();
             }
         }
     }
 
-    public Pile GetPlayerHand()
-    {
-        foreach (Player p in players)
-        {
-            if (p.isLocalPlayer)
-                return p.hand;
-        }
-        Debug.Log("Couldn't find player's hand!!");
-        return players[0].hand;
-    }
 
-    public Pile GetLandlordHand()
-    {
-        return players[0].hand;
-    }
 }

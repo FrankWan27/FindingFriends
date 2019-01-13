@@ -22,6 +22,7 @@ public class CardManager : MonoBehaviour
         }
         else
         {
+
             SpriteRenderer sr = this.transform.GetChild(0).GetComponent<SpriteRenderer>();
             sr.sprite = spriteLib.sprites[spriteLib.CardToSprite(card)];
         }

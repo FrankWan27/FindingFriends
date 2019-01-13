@@ -32,6 +32,9 @@ public class GameManager : NetworkBehaviour
     public Text trumpSuitText;
     public Text currentSuitText;
 
+    public List<Player> players;
+
+
     [SyncVar]
     public int playerCount = 0;
 
@@ -50,6 +53,8 @@ public class GameManager : NetworkBehaviour
 
     void Start()
     {
+        players = new List<Player>();
+
         dm = gameObject.GetComponent<DeckManager>();
         selected = new List<GameObject>();
     }
@@ -65,12 +70,21 @@ public class GameManager : NetworkBehaviour
         GameObject.Destroy(GameObject.Find("BeginButton"));
     }
 
+    [ClientRpc]
+    public void RpcDestroyCard()
+    {
+        GameObject.Destroy(dm.deckObject.GetChild(0).gameObject);
+    }
+
     public void Draw()
     {
-        if(gameState == state.Draw)
-            dm.Deal();
+        if (gameState == state.Draw)
+        {
+            
+            GetPlayer().Draw();
+        }
         else
-            ResetPlayerHand();
+        { }
 
         if (dm.deck.Count() <= 0)
         {
@@ -101,8 +115,8 @@ public class GameManager : NetworkBehaviour
 
     public void ResetPlayerHand()
     {
-        dm.GetPlayerHand().Sort();
-        ResetHandDisplay(dm.GetPlayerHand());
+        GetPlayer().hand.Sort();
+        ResetHandDisplay(GetPlayer().hand);
 
         foreach (GameObject o in selected)
             GameObject.Destroy(o);
@@ -274,5 +288,21 @@ public class GameManager : NetworkBehaviour
             cards.Add(o.GetComponent<CardManager>().card);
         }
         return cards;
+    }
+
+    public Player GetPlayer()
+    {
+        foreach (Player p in players)
+        {
+            if (p.isLocalPlayer)
+                return p;
+        }
+        Debug.Log("Couldn't find player");
+        return players[0];
+    }
+
+    public Pile GetLandlordHand()
+    {
+        return players[0].hand;
     }
 }
